@@ -16,6 +16,10 @@ import os
 import threading
 import sqlite3
 
+
+from sys import argv
+
+
 secret='some-secret-key'
 
 
@@ -266,4 +270,4 @@ def server_static(filepath):
         return "You are not logged in. Access denied."
 
 
-bt.run(host='localhost', port=80, server='paste')
+bt.run(host='0.0.0.0', port=argv[1])
