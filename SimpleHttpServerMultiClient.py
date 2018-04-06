@@ -8,17 +8,13 @@ Created on Tue Jan 16 15:42:39 2018
 
 
 import bottle as bt
-
+import pandas as pd
 import numpy as np
 import os
 
 #import ML_MegaFunction as ml
 import threading
 import sqlite3
-
-
-from sys import argv
-
 
 secret='some-secret-key'
 
@@ -270,4 +266,4 @@ def server_static(filepath):
         return "You are not logged in. Access denied."
 
 
-bt.run(host='0.0.0.0', port=argv[1])
+bt.run(host='localhost', port=80, server='paste')

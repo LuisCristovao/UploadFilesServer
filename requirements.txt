@@ -1,5 +1,0 @@
-bottle
-pandas
-numpy
-sqlite3
-threading
