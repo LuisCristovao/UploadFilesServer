@@ -8,13 +8,13 @@ Created on Tue Jan 16 15:42:39 2018
 
 
 import bottle as bt
-import pandas as pd
-import numpy as np
+#import pandas as pd
+#import numpy as np
 import os
-
+from sys import argv
 #import ML_MegaFunction as ml
 import threading
-import sqlite3
+#import sqlite3
 
 secret='some-secret-key'
 
@@ -46,19 +46,19 @@ class Client:
            self.delete_file=False
         
 
-def getUsers():
-   data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
-   return data
-
-#for db        
-def getUsersDB():
-    conn = sqlite3.connect('users.db')
-    c = conn.cursor()
-    c.execute("SELECT username, password FROM users")
-    result = c.fetchall()
-#    print(result[0][0])
-    c.close()
-    return result
+#def getUsers():
+#   data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
+#   return data
+#
+##for db        
+#def getUsersDB():
+#    conn = sqlite3.connect('users.db')
+#    c = conn.cursor()
+#    c.execute("SELECT username, password FROM users")
+#    result = c.fetchall()
+##    print(result[0][0])
+#    c.close()
+#    return result
 
 
 def validate_user(secret):
@@ -292,4 +292,4 @@ def server_static(filepath):
         return "You are not logged in. Access denied."
 
 
-bt.run(host='localhost', port=80, server='paste')
+bt.run(host='0.0.0.0', port=argv[1], server='paste')
