@@ -80,27 +80,53 @@ def validate_user(secret):
 
 
 #for BD
-def check_login(username,password):
-    conn = sqlite3.connect('users.db')
-    c = conn.cursor()
-    c.execute("SELECT username, password FROM users where username='"+username+"' and password='"+password+"'")
-    result = c.fetchall()
-    if result:
+#def check_login(username,password):
+#    conn = sqlite3.connect('users.db')
+#    c = conn.cursor()
+#    c.execute("SELECT username, password FROM users where username='"+username+"' and password='"+password+"'")
+#    result = c.fetchall()
+#    if result:
+#        return True
+#    else:
+#        return False
+#    
+#    
+#def SignUp(username,password):
+#    conn = sqlite3.connect('users.db')
+##    c = conn.cursor()
+#    try:
+#        conn.execute("INSERT INTO users (username,password) VALUES ('"+username+"','"+password+"')")
+#        conn.commit()
+#    except:
+#        return False
+#    
+#    return True
+    
+
+def SignUp(username,password):
+    global clients
+    #if already exists
+    if username in clients:
+       return False
+   
+    else:
+        clients[username]=Client(username,password)
         return True
+       
+   
+def check_login(username,password):
+    global clients
+    
+    #user exists
+    if username in clients:
+        client_pass=clients[username].password
+        #check if pass correct
+        if client_pass==password:
+            return True
+        else:
+            return False
     else:
         return False
-    
-    
-def SignUp(username,password):
-    conn = sqlite3.connect('users.db')
-#    c = conn.cursor()
-    try:
-        conn.execute("INSERT INTO users (username,password) VALUES ('"+username+"','"+password+"')")
-        conn.commit()
-    except:
-        return False
-    
-    return True
    
 
 #_______Main___________________________
@@ -157,13 +183,13 @@ def signUp():
     password = bt.request.forms.get('password')
     cpassword = bt.request.forms.get('cpassword')
     if cpassword!=password:
-        return bt.template('sign_up',different_pass_error="visible",username_error="hidden")
+        return bt.template('sign_up',different_pass_error="visible",username_error="visible")
     else:
         if SignUp(username,password):
             #if it was successful de sign uo in the db
             return "<h2>Your username: "+username+" was successfully inserted in our DataBase.</h2><br><a href='/'>Return</a>"
         else:
-            return bt.template('sign_up',different_pass_error="hidden",username_error="visible")    
+            return bt.template('sign_up',different_pass_error="visible",username_error="visible")    
 
 
 @bt.get('/restricted')
