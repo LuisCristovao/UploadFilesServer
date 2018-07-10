@@ -46,7 +46,7 @@ li:hover{
   Select a file: <input type="file" name="upload" />
   <input type="submit" value="Start upload" />
 </form>
-<text style="cursor:pointer; color:blue; text-decoration:underline" onclick="logout(this)">Log Out</text>		<a href="delete">Delete</a>	
+<text style="cursor:pointer; color:blue; text-decoration:underline" onclick="logout(this)">Log Out</text>		
 
 <table border="1">
 %for row in rows:
@@ -81,6 +81,10 @@ function off(row){
 }
 function download(file){
 window.location=file;
+
+}
+function Delete(file){
+window.location="delete/"+file;
 
 }
 function logout(text){
@@ -135,7 +139,12 @@ $("#items > li").click(function(){
         download(selected);
     }
     if($(this).text().localeCompare('Delete')==0){
-        
+        var r = confirm("Are you sure you want to Delete?");
+        if (r == true) {
+            Delete(selected);
+        } else {
+            //nothing...
+        }
     }
     //onobject=null;
     selected=null;

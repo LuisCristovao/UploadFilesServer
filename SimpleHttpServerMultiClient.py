@@ -221,14 +221,14 @@ def do_upload():
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            upload = bt.request.files.get('upload')
+            #upload = bt.request.files.get('upload')
             newpath = r'files/Template/'+c+'/' 
 #            if not os.path.exists(newpath):
 #                os.makedirs(newpath)
             t=threading.Thread(target=clients[c].uploadFile(newpath))
             clients_upload_threads[c]=t
             t.start()
-            return "Hi "+c+", "+upload.filename+" was uploaded!<br><a href='/restricted'>Return to previouse page</a>"
+            return bt.redirect('/restricted')
         
     return "You are not logged in. Access denied."
 
@@ -269,9 +269,9 @@ def erase(filename):
             clients_delete_threads[c]=t
             t.start()
             if clients[c].delete_file:
-                return "Hi "+c+", "+filename+" was Deleted!<br><a href='/delete'>Return to previouse page</a>"
+                return bt.redirect('/restricted')
             else:
-                return "Hi "+c+", "+filename+" was  Not Deleted!<br><a href='/delete'>Return to previouse page</a>"
+                return bt.redirect('/restricted')
         
     return "You are not logged in. Access denied."
 
