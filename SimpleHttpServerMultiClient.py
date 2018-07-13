@@ -15,10 +15,12 @@ from sys import argv
 #import ML_MegaFunction as ml
 import threading
 #import sqlite3
+import random
 
 secret='some-secret-key'
 
 
+shared_files={}
 
 clients={}
 clients_upload_threads={}
@@ -44,6 +46,21 @@ class Client:
             self.delete_file=True
         except:
            self.delete_file=False
+           
+    def UniqueString(num=30):
+       s="abcdfghijklmnopqrstuvxzywçàáóòú,:;?_-~^+*/\|1234567890"
+       control=True
+       ns=""
+       while(control):
+           
+           for i in range(num):
+               n=random.randint(0,len(s))
+               ns+=''+s[n]
+           if shared_files[ns]!=None:
+               control=False
+       
+       return ns
+           
         
 
 #def getUsers():
@@ -275,9 +292,37 @@ def erase(filename):
         
     return "You are not logged in. Access denied."
 
+@bt.get('/share/<filename>',method='GET')
+def share(filename):
+    global clients
+    global secret
+    global clients_upload_threads
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #valid user
+            unique_key=c.UniqueString() 
+            shared_files[unique_key]=c+'/'+filename#must be unique string
 
+            return unique_key 
         
-    
+    return "You are not logged in. Access denied."
+        
+@bt.get('/stopshare/<uniquekey>',method='GET')
+def stopshare(uniquekey):
+    global clients
+    global secret
+    global clients_upload_threads
+    for c in clients:
+        key = bt.request.get_cookie(clients[c].username, secret=secret)
+        if key:
+            #valid user
+            del shared_files[uniquekey]
+
+            return "Stop Sharing"+uniquekey 
+        
+    return "You are not logged in. Access denied."    
+
 
 @bt.get('/<filepath:path>')
 def server_static(filepath):
