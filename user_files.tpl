@@ -60,8 +60,8 @@ li:hover{
 <div id='cntnr'>
     <ul id='items'>
       <li>Download</li>
-      <li>Copy</li>
-      <li>Paste</li>
+      <li>Share</li>
+      <li>Don't Share</li>
       <li>Delete</li>  
     </ul> 
 </div>
