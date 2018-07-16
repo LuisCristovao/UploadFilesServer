@@ -87,6 +87,12 @@ function Delete(file){
 window.location="delete/"+file;
 
 }
+function Share(file){
+    
+}   
+function StopSharing(uniquekey){
+    
+}    
 function logout(text){
 	//document.cookie="{{User}}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;";
     DeleteAllCookies();
@@ -128,12 +134,7 @@ function startFocusOut(){
   $(document).off("click");
   });
 }
-function On(element){
-    onobject=element.id;
-}
-function Off(element){
-    onobject=null;
-}
+
 $("#items > li").click(function(){
     if($(this).text().localeCompare('Download')==0){
         download(selected);
@@ -145,6 +146,12 @@ $("#items > li").click(function(){
         } else {
             //nothing...
         }
+    }
+    if($(this).text().localeCompare('Share')==0){
+        
+    }
+    if($(this).text().localeCompare("Don't Share")==0){
+        
     }
     //onobject=null;
     selected=null;

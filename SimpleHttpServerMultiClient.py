@@ -31,7 +31,7 @@ class Client:
     def __init__(self,username,password):
         self.username=username
         self.password=password
-        
+        self.shared_files={}
     
     def uploadFile(self,save_path):
         upload = bt.request.files.get('upload')
@@ -60,8 +60,19 @@ class Client:
                control=False
        
        return ns
-           
+   
+    def AddShareFile(self,SF):
+        self.shared_files[SF.uniquekey]=SF
         
+    def RemoveSharedFile(self,unkey):
+        del self.shared_files[unkey]
+           
+class share_file:
+    def __init__(self,_user,_filename,_uniquekey):
+        self.user=_user
+        self.filename=_filename
+        self.uniquekey=_uniquekey
+                
 
 #def getUsers():
 #   data = np.genfromtxt('files/Users.txt',dtype=str, delimiter=',')
@@ -218,6 +229,7 @@ def restricted_area():
             #valid user
             files_dir = 'files/Template/'+c
             user_files = os.listdir(files_dir)
+            
             print(user_files)
             if user_files:
                 return bt.template('user_files',rows=user_files,User=c)
@@ -328,6 +340,12 @@ def stopshare(uniquekey):
 def server_static(filepath):
     global secret
     print(filepath)
+    if(shared_files[filepath]!=None):
+        value=shared_files[filepath]
+        user=value.split('/')[0]
+        root='files/Template/'+user
+        filename=value.split('/')[1]
+        return bt.static_file(filename, root=root,download=True) 
     for c in clients:
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
