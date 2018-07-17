@@ -45,6 +45,8 @@ class Client:
         try:
             os.remove(path)
             self.delete_file=True
+            
+            self.RemoveFileFromMemory(path.split('/')[3])
         except:
            self.delete_file=False
            
@@ -93,16 +95,31 @@ class Client:
         
     def RemoveSharedFile(self,filename):
         global shared_files
-        value=self.files[filename]
-        if(value[1]!=None):
-            del shared_files[value[1]]
-            value[1]=None
-            self.files[filename]=value
-            return "Delete"    
+        if filename in self.files:
+            value=self.files[filename]
+            if(value[1]!=None):
+                del shared_files[value[1]]
+                value[1]=None
+                self.files[filename]=value
+                return "Delete"    
+            else:
+                return "Fail"
         else:
-            return "Fail"
+            return 'Fail'
             
-
+    def RemoveFileFromMemory(self,filename):
+        global shared_files
+        if filename in self.files:
+            value=self.files[filename]
+            del self.files[filename]
+            unicode=value[1]
+            if(unicode!=None):
+                del shared_files[unicode]
+                    
+            return "Delete"    
+            
+        else:
+            return 'Fail'
                 
 
 #def getUsers():
