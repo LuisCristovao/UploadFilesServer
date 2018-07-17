@@ -52,7 +52,7 @@ class Client:
            
     @staticmethod       
     def UniqueString(num=30):
-       s="abcdfghijklmnopqrstuvxzywçàáóòú,:;?_-~^+*/\|1234567890"
+       s="abcdfghijklmnopqrstuvxzyw1234567890ABCDEFGHIJKLMNOPQTUVXZWY"
        control=True
        ns=""
        while(control):
@@ -82,25 +82,26 @@ class Client:
     
     def AddShareFile(self,filename):
         global shared_files
-        value=self.files[filename]
-        if(value[1]==None):
-            uniquecode=self.UniqueString()
-            value[1]=uniquecode
-            self.files[filename]=value
-            shared_files[uniquecode]=''+self.username+'/'+filename
-            return uniquecode
-        else:
-            return value[1]
+        if filename in self.files:
+            value=self.files[filename]
+            if(value[1]=="{{NotShared}}"):
+                uniquecode=self.UniqueString()
+                new_val=(value[0],uniquecode)
+                self.files[filename]=new_val
+                shared_files[uniquecode]=''+self.username+'/'+filename
+                return uniquecode
+            else:
+                return value[1]
         
         
     def RemoveSharedFile(self,filename):
         global shared_files
         if filename in self.files:
             value=self.files[filename]
-            if(value[1]!=None):
+            if value[1]!="{{NotShared}}":
                 del shared_files[value[1]]
-                value[1]=None
-                self.files[filename]=value
+                new_val=(value[0],"{{NotShared}}")
+                self.files[filename]=new_val
                 return "Delete"    
             else:
                 return "Fail"
@@ -362,9 +363,9 @@ def share(filename):
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            unique_key=c.AddShareFile(filename)
+            clients[c].AddShareFile(filename)
 
-            return unique_key 
+            return bt.redirect('/restricted')
         
     return "You are not logged in. Access denied."
         
@@ -377,11 +378,8 @@ def stopshare(filename):
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            res=c.RemoveSharedFile(filename)
-            if res=="Delete":
-                return "Stop Sharing "+filename
-            else:
-                return ""+filename+" is not being shared already."
+            clients[c].RemoveSharedFile(filename)
+            return bt.redirect('/restricted')
         
     return "You are not logged in. Access denied."    
 

@@ -52,9 +52,9 @@ li:hover{
 %for row in rows:
   %filename=row.split('        ')[0];unicode=row.split('        ')[1]
    
-  <tr  onmouseover="on(this,'{{filename}}')" onmouseout="off(this)" onclick="download('{{filename}}')">
+  <tr   onmouseover="on(this,'{{filename}}')" onmouseout="off(this)" onclick="download('{{filename}}')">
     
-    <td title="right-click for more option">{{filename}}</td>
+    <td  title="right-click for more option">{{filename}}</td>
     %if unicode!='{{NotShared}}':
         <td title="right-click for more option">{{unicode}}</td>  
     %end
@@ -87,14 +87,26 @@ function download(file){
 window.location=file;
 
 }
+function httpGetAsync(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText,theUrl.split('/')[1]);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+} 
+    
 function Delete(file){
 window.location="delete/"+file;
 
 }
 function Share(file){
+    window.location="share/"+file;
     
 }   
-function StopSharing(uniquekey){
+function StopSharing(file){
     
 }    
 function logout(text){
@@ -152,10 +164,10 @@ $("#items > li").click(function(){
         }
     }
     if($(this).text().localeCompare('Share')==0){
-        
+        Share(selected);
     }
     if($(this).text().localeCompare("Don't Share")==0){
-        
+        StopSharing(selected);
     }
     //onobject=null;
     selected=null;
