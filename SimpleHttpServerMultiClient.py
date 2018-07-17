@@ -31,7 +31,7 @@ class Client:
     def __init__(self,username,password):
         self.username=username
         self.password=password
-        self.shared_files={}
+        self.files={}
     
     def uploadFile(self,save_path):
         upload = bt.request.files.get('upload')
@@ -39,6 +39,7 @@ class Client:
     
         #save_path='files/Template'
         upload.save(save_path, overwrite=True) # appends upload.filename automatically
+        self.files[upload.filename]=(upload.filename,'{{NotShared}}')
         
     def deleteFile(self,path):
         try:
@@ -47,6 +48,7 @@ class Client:
         except:
            self.delete_file=False
            
+    @staticmethod       
     def UniqueString(num=30):
        s="abcdfghijklmnopqrstuvxzywçàáóòú,:;?_-~^+*/\|1234567890"
        control=True
@@ -54,24 +56,53 @@ class Client:
        while(control):
            
            for i in range(num):
-               n=random.randint(0,len(s))
+               n=random.randint(0,len(s)-1)
                ns+=''+s[n]
-           if shared_files[ns]!=None:
+           # if already exists try again    
+           if ns in shared_files:
+               ns=""
+           else:
                control=False
        
        return ns
-   
-    def AddShareFile(self,SF):
-        self.shared_files[SF.uniquekey]=SF
+    
+    
+    def FilesToString(self):
+        filenames=[]
         
-    def RemoveSharedFile(self,unkey):
-        del self.shared_files[unkey]
-           
-class share_file:
-    def __init__(self,_user,_filename,_uniquekey):
-        self.user=_user
-        self.filename=_filename
-        self.uniquekey=_uniquekey
+        for key in self.files:
+            value=self.files[key]
+            filenames.append(value[0]+'        '+value[1])
+            
+        
+        return (filenames)
+    
+    
+    def AddShareFile(self,filename):
+        global shared_files
+        value=self.files[filename]
+        if(value[1]==None):
+            uniquecode=self.UniqueString()
+            value[1]=uniquecode
+            self.files[filename]=value
+            shared_files[uniquecode]=''+self.username+'/'+filename
+            return uniquecode
+        else:
+            return value[1]
+        
+        
+    def RemoveSharedFile(self,filename):
+        global shared_files
+        value=self.files[filename]
+        if(value[1]!=None):
+            del shared_files[value[1]]
+            value[1]=None
+            self.files[filename]=value
+            return "Delete"    
+        else:
+            return "Fail"
+            
+
                 
 
 #def getUsers():
@@ -227,12 +258,13 @@ def restricted_area():
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            files_dir = 'files/Template/'+c
-            user_files = os.listdir(files_dir)
-            
-            print(user_files)
-            if user_files:
-                return bt.template('user_files',rows=user_files,User=c)
+            #files_dir = 'files/Template/'+c
+            #user_files = os.listdir(files_dir)
+            #print(clients[c].files)
+            if bool(clients[c].files):
+                files_unicodes=clients[c].FilesToString()
+                
+                return bt.template('user_files',rows=files_unicodes,User=c)
             else:
                 #Dont have files yet
                 return bt.template('no_files_yet',User=c)
@@ -313,15 +345,14 @@ def share(filename):
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            unique_key=c.UniqueString() 
-            shared_files[unique_key]=c+'/'+filename#must be unique string
+            unique_key=c.AddShareFile(filename)
 
             return unique_key 
         
     return "You are not logged in. Access denied."
         
-@bt.get('/stopshare/<uniquekey>',method='GET')
-def stopshare(uniquekey):
+@bt.get('/stopshare/<filename>',method='GET')
+def stopshare(filename):
     global clients
     global secret
     global clients_upload_threads
@@ -329,9 +360,11 @@ def stopshare(uniquekey):
         key = bt.request.get_cookie(clients[c].username, secret=secret)
         if key:
             #valid user
-            del shared_files[uniquekey]
-
-            return "Stop Sharing"+uniquekey 
+            res=c.RemoveSharedFile(filename)
+            if res=="Delete":
+                return "Stop Sharing "+filename
+            else:
+                return ""+filename+" is not being shared already."
         
     return "You are not logged in. Access denied."    
 
@@ -340,7 +373,7 @@ def stopshare(uniquekey):
 def server_static(filepath):
     global secret
     print(filepath)
-    if(shared_files[filepath]!=None):
+    if(filepath in shared_files):
         value=shared_files[filepath]
         user=value.split('/')[0]
         root='files/Template/'+user

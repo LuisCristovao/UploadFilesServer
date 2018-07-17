@@ -50,10 +50,14 @@ li:hover{
 
 <table border="1">
 %for row in rows:
-  <tr  onmouseover="on(this,'{{row}}')" onmouseout="off(this)" onclick="download('{{row}}')">
-  
-    <td title="right-click for more option">{{row}}</td>
-  
+  %filename=row.split('        ')[0];unicode=row.split('        ')[1]
+   
+  <tr  onmouseover="on(this,'{{filename}}')" onmouseout="off(this)" onclick="download('{{filename}}')">
+    
+    <td title="right-click for more option">{{filename}}</td>
+    %if unicode!='{{NotShared}}':
+        <td title="right-click for more option">{{unicode}}</td>  
+    %end
   </tr>
 %end
 </table>
