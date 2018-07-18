@@ -174,7 +174,7 @@ $("#items > li").click(function(){
     if($(this).text().localeCompare("Copy Link")==0){
         //StopSharing(selected);
         console.log(selected);
-        copyToClipboard(window.location.host+'/'+selected);
+        copyToClipboard(window.location.protocol+'//'+window.location.host+'/'+selected);
     }
     //onobject=null;
     selected=null;
