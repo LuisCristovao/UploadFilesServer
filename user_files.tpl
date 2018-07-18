@@ -52,11 +52,11 @@ li:hover{
 %for row in rows:
   %filename=row.split('        ')[0];unicode=row.split('        ')[1]
    
-  <tr   onmouseover="on(this,'{{filename}}')" onmouseout="off(this)" onclick="download('{{filename}}')">
+  <tr     >
     
-    <td  title="right-click for more option">{{filename}}</td>
+    <td  title="right-click for more option" onmouseover="on(this,'{{filename}}')" onmouseout="off(this)">{{filename}}</td>
     %if unicode!='{{NotShared}}':
-        <td title="right-click for more option">{{unicode}}</td>  
+        <td title="right-click for more option" onmouseover="on(this,'{{unicode}}')" onmouseout="off(this)">localhost:2000/{{unicode}}</td>  
     %end
   </tr>
 %end
@@ -64,9 +64,11 @@ li:hover{
 <div id='cntnr'>
     <ul id='items'>
       <li>Download</li>
-      <li>Share</li>
-      <li>Don't Share</li>
+      <li>Copy Link</li>
       <li>Delete</li>  
+      <hr />  
+      <li>Share File</li>
+      <li>Don't Share File</li>    
     </ul> 
 </div>
 <p id="download_text" style="visibility:hidden;"><font color="red">Click on row to download File</font></p>	
@@ -163,16 +165,33 @@ $("#items > li").click(function(){
             //nothing...
         }
     }
-    if($(this).text().localeCompare('Share')==0){
+    if($(this).text().localeCompare('Share File')==0){
         Share(selected);
     }
-    if($(this).text().localeCompare("Don't Share")==0){
+    if($(this).text().localeCompare("Don't Share File")==0){
         StopSharing(selected);
+    }
+    if($(this).text().localeCompare("Copy Link")==0){
+        //StopSharing(selected);
+        console.log(selected);
+        copyToClipboard(window.location.host+'/'+selected);
     }
     //onobject=null;
     selected=null;
 });
+
     
+const copyToClipboard = str => {
+  const el = document.createElement('textarea');
+  el.value = str;
+  el.setAttribute('readonly', '');
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+};
     
 </script>
 </html>

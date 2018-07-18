@@ -260,13 +260,13 @@ def signUp():
     password = bt.request.forms.get('password')
     cpassword = bt.request.forms.get('cpassword')
     if cpassword!=password:
-        return bt.template('sign_up',different_pass_error="visible",username_error="visible")
+        return bt.template('sign_up',different_pass_error="visible",username_error="hidden")
     else:
         if SignUp(username,password):
             #if it was successful de sign uo in the db
             return "<h2>Your username: "+username+" was successfully inserted in our DataBase.</h2><br><a href='/'>Return</a>"
         else:
-            return bt.template('sign_up',different_pass_error="visible",username_error="visible")    
+            return bt.template('sign_up',different_pass_error="hidden",username_error="visible")    
 
 
 @bt.get('/restricted')
