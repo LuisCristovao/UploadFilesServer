@@ -56,7 +56,7 @@ li:hover{
     
     <td  title="right-click for more option" onmouseover="on(this,'{{filename}}')" onmouseout="off(this)">{{filename}}</td>
     %if unicode!='{{NotShared}}':
-        <td title="right-click for more option" onmouseover="on(this,'{{unicode}}')" onmouseout="off(this)">localhost:2000/{{unicode}}</td>  
+        <td title="right-click for more option" onmouseover="on(this,'{{unicode}}')" onmouseout="off(this)">https://upload-server-bottle.herokuapp.com/{{unicode}}</td>  
     %end
   </tr>
 %end
