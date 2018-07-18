@@ -392,7 +392,7 @@ def server_static(filepath):
         value=shared_files[filepath]
         user=value.split('/')[0]
         root='files/Template/'+user
-        filename=value.split('/')[1]
+        filename=value.split('/')[1] 
         return bt.static_file(filename, root=root,download=True) 
     for c in clients:
         key = bt.request.get_cookie(clients[c].username, secret=secret)
