@@ -240,8 +240,8 @@ def do_login():
     username = bt.request.forms.get('username')
     password = bt.request.forms.get('password')
     if check_login(username, password):
-        client=Client(username,password)
-        clients[username]=client
+#        client=Client(username,password)
+#        clients[username]=client
         bt.response.set_cookie(username, password, secret=secret)
         newpath = r'files/Template/'+username+'/' 
         if not os.path.exists(newpath):
@@ -403,4 +403,4 @@ def server_static(filepath):
         return "You are not logged in. Access denied."
 
 
-bt.run(host='0.0.0.0', port=argv[1], server='paste')
+bt.run(host='0.0.0.0', port=2000, server='paste')
