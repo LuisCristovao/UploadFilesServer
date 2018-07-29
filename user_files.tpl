@@ -116,6 +116,7 @@ function logout(text){
     DeleteAllCookies();
 	window.location="/";
 }
+    
  function DeleteAllCookies()
 {
 			Cookie=document.cookie;
